@@ -1,3 +1,4 @@
+import java.io.Console;
 import java.sql.*;
 import java.util.Scanner;
 
@@ -12,31 +13,54 @@ public class Prototype {
     public static final String ANSI_WHITE = "\u001B[37m";
 
 
-    public static void main(String[] args) throws ClassNotFoundException {
+    public static void main(String[] args) {
         Scanner s = new Scanner(System.in);
+        Console console = System.console();
+        if (console == null) {
+            System.out.println("Couldn't get Console instance");
+            System.exit(0);
+        }
         try {
+            Connection con = DatabaseConnector.getConnection();
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://172.26.114.217:3306/yarkindb", "yarkin", "1234");
             System.out.println(ANSI_GREEN + "Database Connected!" + ANSI_RESET);
 
             PreparedStatement userStatement = con.prepareStatement("INSERT INTO user (username, password) VALUES (?, ?);");
-            System.out.println("Enter Info:");
+            System.out.println("Enter Username:");
             userStatement.setString(1, s.nextLine());
-            userStatement.setString(2, s.nextLine());
-
+            System.out.println("Enter Password:");
+            char[] passwordArray = console.readPassword("Enter your secret password: ");
+            String password = new String(passwordArray);
+            userStatement.setString(2, password);
+            password = null;
             userStatement.executeUpdate();
 
-
-            PreparedStatement getUsers = con.prepareStatement("select uid, uid, username, password from user;");
+            System.out.println("See Database?");
+            Scanner in = new Scanner(System.in);
+            int uid = 0;
+            String selectedUsername = null;
+            String selectedPassword = null;
+            if (in.nextLine().equals("yes")) {
+            PreparedStatement getUsers = con.prepareStatement("select uid, username, password from user;");
             ResultSet getUsersResultSet = getUsers.executeQuery();
-            while (getUsersResultSet.next()) {
-                int data = getUsersResultSet.getInt("uid");
-                System.out.println(data);
-                System.out.println(getUsersResultSet.getString(2));
-                System.out.println(getUsersResultSet.getString(3));
 
 
+                while (getUsersResultSet.next()) {
+                uid = getUsersResultSet.getInt("uid");
+                selectedUsername = (getUsersResultSet.getString(2));
+                selectedPassword = (getUsersResultSet.getString(3));
+                }
+
+            System.out.println("User info:");
+            System.out.println("UID: " + uid);
+            System.out.println("Username: " + selectedUsername);
+            System.out.println("Password: " + selectedPassword);
+
+
+
+
+            }else {
+                System.out.println("Exiting");
             }
 
 
