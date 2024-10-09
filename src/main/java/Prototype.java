@@ -17,7 +17,7 @@ public class Prototype {
         Scanner s = new Scanner(System.in);
         Console console = System.console();
         if (console == null) {
-            System.out.println("Couldn't get Console instance");
+            System.out.println("Couldn't get Freak instance");
             System.exit(0);
         }
         try {
@@ -25,36 +25,36 @@ public class Prototype {
 
             System.out.println(ANSI_GREEN + "Database Connected!" + ANSI_RESET);
 
-            PreparedStatement userStatement = con.prepareStatement("INSERT INTO user (username, password) VALUES (?, ?);");
-            System.out.println("Enter Username:");
-            userStatement.setString(1, s.nextLine());
-            System.out.println("Enter Password:");
-            char[] passwordArray = console.readPassword("Enter your secret password: ");
-            String password = new String(passwordArray);
-            userStatement.setString(2, password);
-            password = null;
-            userStatement.executeUpdate();
+            PreparedStatement freakStatement = con.prepareStatement("INSERT INTO user (username, password) VALUES (?, ?);");
+            System.out.println("Enter Freakname:");
+            freakStatement.setString(1, s.nextLine());
+            System.out.println("Enter Freakword:");
+            char[] freakwordArray = console.readPassword("Enter your secret freakword: ");
+            String freakword = new String(freakwordArray);
+            freakStatement.setString(2, freakword);
+            freakword = null;
+            freakStatement.executeUpdate();
 
             System.out.println("See Database?");
             Scanner in = new Scanner(System.in);
             int uid = 0;
-            String selectedUsername = null;
-            String selectedPassword = null;
+            String selectedFreakname = null;
+            String selectedFreakword = null;
             if (in.nextLine().equals("yes")) {
-            PreparedStatement getUsers = con.prepareStatement("select uid, username, password from user;");
-            ResultSet getUsersResultSet = getUsers.executeQuery();
+            PreparedStatement getFreaks = con.prepareStatement("select uid, username, password from user;");
+            ResultSet getFreaksResultSet = getFreaks.executeQuery();
 
 
-                while (getUsersResultSet.next()) {
-                uid = getUsersResultSet.getInt("uid");
-                selectedUsername = (getUsersResultSet.getString(2));
-                selectedPassword = (getUsersResultSet.getString(3));
+                while (getFreaksResultSet.next()) {
+                uid = getFreaksResultSet.getInt("uid");
+                selectedFreakname = (getFreaksResultSet.getString(2));
+                selectedFreakword = (getFreaksResultSet.getString(3));
                 }
 
-            System.out.println("User info:");
+            System.out.println("Freak info:");
             System.out.println("UID: " + uid);
-            System.out.println("Username: " + selectedUsername);
-            System.out.println("Password: " + selectedPassword);
+            System.out.println("Freakname: " + selectedFreakname);
+            System.out.println("Freakword: " + selectedFreakword);
 
 
 
@@ -65,7 +65,7 @@ public class Prototype {
 
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            System.out.println(ANSI_RED+"Duplicate username not allowed!"+ANSI_RESET);
+            System.out.println(ANSI_RED+"Duplicate freakname not allowed!"+ANSI_RESET);
 
 
         } catch (SQLException e) {
